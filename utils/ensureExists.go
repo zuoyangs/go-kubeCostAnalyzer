@@ -6,8 +6,8 @@ import (
 	"os"
 )
 
-// ensureDirExists 检查目录是否存在，如果不存在则创建它
-func ensureDirExists(dir string) error {
+// EnsureDirExists 检查目录是否存在，如果不存在则创建它
+func EnsureDirExists(dir string) error {
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		// 尝试创建目录
 		if err := os.MkdirAll(dir, 0755); err != nil {
