@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/zuoyangs/go-kubeCostAnalyzer/apps/output_execl"
 	"github.com/zuoyangs/go-kubeCostAnalyzer/config"
 	v1 "k8s.io/api/apps/v1"
 	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -12,6 +13,12 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
+// 用于从不同类型的 Kubernetes 工作负载中获取资源信息的接口
+type ResourceGetter interface {
+	GetResourceInfo() ResourceInfo
+}
+
+// GetResourceInfo 从不同类型的 Kubernetes 工作负载中提取资源信息。
 func getResourceInfo(obj interface{}, clusterName string) ResourceInfo {
 	var name string
 	var replicas int32
@@ -59,7 +66,7 @@ func getResourceInfo(obj interface{}, clusterName string) ResourceInfo {
 	}
 }
 func Kubernete_Querier(dst, timestamp string) {
-	envs := []string{"hwc-sh1-dev-cluster", "hwc-sh1-test-cluster"}
+	envs := []string{"xxxxxxx-dev-cluster", "xxxxxxx-test-cluster", "xxxxxxx-pub-cluster", "xxxxxxx-pre-cluster", "xxxxxxx-prod-cluster"}
 	config.Init()
 
 	clusterResources := make(ClusterResources)
@@ -67,7 +74,7 @@ func Kubernete_Querier(dst, timestamp string) {
 	for _, env := range envs {
 		_, err := config.GetSectionsAndLabels(env)
 		if err != nil {
-			fmt.Println("Error getting labels: ", err)
+			log.Println("Error getting labels: ", err)
 			continue
 		}
 
@@ -98,7 +105,7 @@ func Kubernete_Querier(dst, timestamp string) {
 		// 3. 获取namespace列表
 		namespaceList, err := coreClient.CoreV1().Namespaces().List(context.TODO(), metaV1.ListOptions{})
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			continue
 		}
 
@@ -153,7 +160,7 @@ func Kubernete_Querier(dst, timestamp string) {
 	}
 
 	// 写入 Excel
-	if err := WriteClusterResourcesToExcel(clusterResources, timestamp); err != nil {
+	if err := output_execl.WriteClusterResourcesToExcel(clusterResources, timestamp); err != nil {
 		fmt.Println("Error writing to Excel:", err)
 		return
 	}

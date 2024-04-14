@@ -3,6 +3,7 @@ module github.com/zuoyangs/go-kubeCostAnalyzer
 go 1.22.0
 
 require (
+	github.com/gorilla/mux v1.8.1
 	github.com/spf13/viper v1.18.2
 	github.com/xuri/excelize/v2 v2.8.1
 	k8s.io/api v0.29.3
